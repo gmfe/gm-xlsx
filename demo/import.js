@@ -1,9 +1,5 @@
 import React from 'react';
-import XLSX from '../node_modules/xlsx/xlsx';
-import FileSaver from 'file-saver';
-import './index.less';
-
-const {utils, read, readFile} = XLSX;
+import {sheetToJson} from '../src/index';
 
 class Import extends React.Component {
     constructor(props) {
@@ -13,7 +9,6 @@ class Import extends React.Component {
     }
 
     handleFileLoad(e) {
-        const reader = new FileReader();
         const files = e.target.files;
 
         if (!files || files.length === 0) {
@@ -21,23 +16,12 @@ class Import extends React.Component {
         }
 
         const file = files[0];
-        let res = [];
-        reader.readAsBinaryString(file);
 
-        reader.onload = (data) => {
-            const binary = data.target.result;
-            const wb = read(binary, {type: 'binary'});
-            console.log(wb);
-            for (let name of wb.SheetNames) {
-                const ws = wb.Sheets[name];
-                res[name] = XLSX.utils.sheet_to_json(ws, {header:1, range: 4});
-            }
-            console.log(res);
-        };
+        sheetToJson(file, this.handleFile, {header:1});
+    }
 
-        reader.onerror = () => {
-            throw Error('读取文件错误');
-        };
+    handleFile(res) {
+        console.log(res);
     }
 
     render() {

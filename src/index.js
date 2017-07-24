@@ -2,7 +2,7 @@ import XLSX from '../node_modules/xlsx/xlsx';
 import FileSaver from 'file-saver';
 import _ from 'lodash';
 
-const {utils, write} = XLSX;
+const {utils, write, read} = XLSX;
 const {json_to_sheet, table_to_sheet} = utils;
 
 /**
@@ -10,7 +10,7 @@ const {json_to_sheet, table_to_sheet} = utils;
  * @param dataMap
  * @param options　
  */
-const jsonToSheet = (dataMap = [], options = {}) => {
+const jsonToSheet = (dataMap, options) => {
     const opts = Object.assign({}, options, {type: 'json'});
     toSheet(dataMap, opts);
 };
@@ -21,9 +21,37 @@ const jsonToSheet = (dataMap = [], options = {}) => {
  * @param options
  * @constructor
  */
-const TableToSheet = (tableMap, options = {}) => {
-    const opts = Object.assign({}, options, {type: 'table'});
+const TableToSheet = (tableMap, options) => {
+    const opts = Object.assign({}, options, {mode: 'table'});
     toSheet(tableMap, opts);
+};
+
+/**
+ * 导入excel,解析excel文档转换为json
+ * @param file
+ * @param cb
+ * @param options
+ */
+const sheetToJson = (file, cb, options) => {
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+
+    //读取文件成功后执行
+    reader.onload = (data) => {
+        const binary = data.target.result;
+        const wb = read(binary, {mode: 'binary'});
+        let res = {};
+
+        _.each(wb.Sheets, (ws, name) => {
+            res[name] = XLSX.utils.sheet_to_json(ws, options);
+        });
+
+        cb(res);
+    };
+
+    reader.onerror = () => {
+        throw Error('读取文件错误');
+    };
 };
 
 //字符串转字符流
@@ -44,20 +72,20 @@ function s2ab(s) {
  * @param opts　配置选项，包含文件名如"test.xlsx"，导出每页数据的名称['sheet1', 'sheet2],
  */
 function toSheet(map, opts) {
-    const {fileName = 'download', SheetNames = [], type = 'json'} = opts;
+    const {fileName = 'download', SheetNames = [], mode = 'json'} = opts;
 
     //处理多个sheet
     let Sheets = {}, sNames = [];
     _.each(map, (data, index) => {
         const sheetName = SheetNames[index] ? SheetNames[index]: ('sheet'+ index); //如果没有传名字，则给默认名字
-        Sheets[sheetName] = (type==='json') ? json_to_sheet(data) : table_to_sheet(data);
+        Sheets[sheetName] = (mode === 'json') ? json_to_sheet(data) : table_to_sheet(data);
         sNames.push(sheetName);
     });
 
-    const ws = write({SheetNames: sNames, Sheets: Sheets}, { bookType: 'xlsx', type: 'binary'});
+    const ws = write({SheetNames: sNames, Sheets: Sheets}, {bookType: 'xlsx', type: 'binary'});
 
     const wsblob = new Blob([s2ab(ws)], {type: 'application/octet-stream'}); //创建二进制对象写入转换好的字节流
     FileSaver.saveAs(wsblob, fileName);
 }
 
-export {jsonToSheet, TableToSheet}
+export {jsonToSheet, TableToSheet, sheetToJson}

@@ -1,9 +1,5 @@
 import React from 'react';
-import XLSX from '../node_modules/xlsx/xlsx';
-import FileSaver from 'file-saver';
 import {jsonToSheet, TableToSheet} from '../src/index';
-
-const {utils, write} = XLSX;
 
 class Export extends React.Component {
     constructor(props) {
@@ -34,57 +30,51 @@ class Export extends React.Component {
                 '性别': '男',
                 '公司': '观麦',
                 '工号': 6666
-            }]
+            }],
+            count: 10000
         };
 
         this.handleExportTable1 = ::this.handleExportTable1;
         this.handleExportTable2 = ::this.handleExportTable2;
         this.handleExportData = ::this.handleExportData;
+        this.handleExportMoreData = ::this.handleExportMoreData;
     }
 
     handleExportTable1() {
         const tbl1 = document.getElementById('sheetjs1');
         const tbl2 = document.getElementById('sheetjs2');
         TableToSheet([tbl1, tbl2], {fileName: 'table_test.xlsx', SheetNames: ['test1']});
-        // const ts = utils.table_to_book(tbl);
-        // const ws = write(ts, { bookType: 'xlsx', type: 'binary'});
-        //
-        // const wsblob = new Blob([this.s2ab(ws)], {type: 'application/octet-stream'}); //创建二进制对象写入转换好的字节流
-        // FileSaver.saveAs(wsblob, "teble.xlsx");
     }
 
     handleExportTable2() {
         const tbl = document.getElementById('sheetjs2');
         TableToSheet([tbl], {fileName: 'table2_test.xlsx', SheetNames: ['test2']});
-        // const ts = utils.table_to_book(tbl);
-        // const ws = write(ts, { bookType: 'xlsx', type: 'binary'});
-        //
-        // const wsblob = new Blob([this.s2ab(ws)], {type: 'application/octet-stream'}); //创建二进制对象写入转换好的字节流
-        // FileSaver.saveAs(wsblob, "teble.xlsx");
     }
 
     handleExportData() {
         const {data1, data2} = this.state;
-        // const d1 = utils.json_to_sheet(data1);
-        // const d2 = utils.json_to_sheet(data2);
-        //
-        // const ws = write({SheetNames: ["first", 'second'], Sheets: {first: d1, second: d2}}, { bookType: 'xlsx', type: 'binary'});
-        //
-        // const wsblob = new Blob([this.s2ab(ws)], {type: 'application/octet-stream'}); //创建二进制对象写入转换好的字节流
-        // FileSaver.saveAs(wsblob, "data.xlsx");
         jsonToSheet([data1, data2], {fileName: 'test.xlsx', SheetNames: ['test1', 'test2']})
     }
 
-    //字符串转字符流
-    s2ab(s) {
-        const buf = new ArrayBuffer(s.length);
-        const view = new Uint8Array(buf);
+    handleExportMoreData() {
+        const tbl = this.createTable();
+        TableToSheet([tbl], {fileName: 'glut_test.xlsx', SheetNames: ['glut_test']});
+    }
 
-        for (let i = 0; i !== s.length; ++i) {
-            view[i] = s.charCodeAt(i) & 0xFF;
+    createTable(){
+        const count = this.state.count;
+        let table = document.createElement("table");
+        let tr,td;
+        for(let m = 0; m<count; m++){
+            //循环插入元素
+            tr = table.insertRow(table.rows.length);
+            for(let n=0;n<5;n++){
+                td = tr.insertCell(tr.cells.length);
+                td.innerHTML = m + '_' + n;
+                td.align = "center";
+            }
         }
-
-        return buf;
+        return table;
     }
 
     render() {
@@ -179,6 +169,9 @@ class Export extends React.Component {
                 <div style={{padding: '10px'}}>通过json数据导出</div>
                 <div> 数据1：{JSON.stringify(this.state.data1)}</div>
                 <div> 数据2：{JSON.stringify(this.state.data2)}</div>
+                <div style={{padding: '10px'}}/>
+                <button className="btn btn-default" onClick={this.handleExportMoreData}>数据大量导出</button>
+                <div style={{padding: '10px'}}>导出10000条数据</div>
             </div>
         );
     }
