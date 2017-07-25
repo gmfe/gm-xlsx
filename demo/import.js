@@ -16,8 +16,9 @@ class Import extends React.Component {
         }
 
         const file = files[0];
+        const readOptions = {type: 'binary'};
 
-        sheetToJson(file, this.handleFile, {header:1});
+        sheetToJson(file, this.handleFile, {header:1}, readOptions);
     }
 
     handleFile(res) {

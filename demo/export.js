@@ -1,5 +1,5 @@
 import React from 'react';
-import {jsonToSheet, TableToSheet} from '../src/index';
+import {jsonToSheet, tableToSheet} from '../src/index';
 
 class Export extends React.Component {
     constructor(props) {
@@ -31,34 +31,70 @@ class Export extends React.Component {
                 '公司': '观麦',
                 '工号': 6666
             }],
-            count: 10000
+            count: 10000,
+            downloading: false
         };
 
         this.handleExportTable1 = ::this.handleExportTable1;
         this.handleExportTable2 = ::this.handleExportTable2;
         this.handleExportData = ::this.handleExportData;
-        this.handleExportMoreData = ::this.handleExportMoreData;
+        this.handleExportMoreTableData = ::this.handleExportMoreTableData;
+        this.handleExportMoreJsonData = ::this.handleExportMoreJsonData;
     }
 
     handleExportTable1() {
         const tbl1 = document.getElementById('sheetjs1');
         const tbl2 = document.getElementById('sheetjs2');
-        TableToSheet([tbl1, tbl2], {fileName: 'table_test.xlsx', SheetNames: ['test1']});
+
+        //配置项,fileName文件名，excel名，writeOptions写入文件配置项
+        const options = {
+            fileName: 'table_test.xlsx',
+            SheetNames: ['test1'],
+            writeOptions: {bookType: 'xlsx', type: 'binary'}
+        };
+
+        TableToSheet([tbl1, tbl2], options);
     }
 
     handleExportTable2() {
         const tbl = document.getElementById('sheetjs2');
-        TableToSheet([tbl], {fileName: 'table2_test.xlsx', SheetNames: ['test2']});
+
+        //配置项,fileName文件名，excel名，writeOptions写入文件配置项
+        const options = {
+            fileName: 'table2_test.xlsx',
+            SheetNames: ['test2'],
+            writeOptions: {bookType: 'xlsx', type: 'binary'}
+        };
+
+        TableToSheet([tbl], options);
     }
 
     handleExportData() {
         const {data1, data2} = this.state;
-        jsonToSheet([data1, data2], {fileName: 'test.xlsx', SheetNames: ['test1', 'test2']})
+        //配置项,fileName文件名，excel名，writeOptions写入文件配置项
+        const options = {
+            fileName: 'test.xlsx',
+            SheetNames: ['test1', 'test2'],
+            writeOptions: {bookType: 'xlsx', type: 'binary'}
+        };
+
+        jsonToSheet([data1, data2], options)
     }
 
-    handleExportMoreData() {
-        const tbl = this.createTable();
-        TableToSheet([tbl], {fileName: 'glut_test.xlsx', SheetNames: ['glut_test']});
+    handleExportMoreTableData() {
+        const self = this;
+        //配置项,fileName文件名，excel名，writeOptions写入文件配置项
+        const options = {
+            fileName: 'glut_test.xlsx',
+            SheetNames: ['glut_test'],
+            writeOptions: {bookType: 'xlsx', type: 'binary'}
+        };
+        self.setState({downloading: true});
+        setTimeout(()=>{
+            const tbl = this.createTable();
+            TableToSheet([tbl], options);
+            self.setState({downloading: false});
+        }, 500);
     }
 
     createTable(){
@@ -68,13 +104,39 @@ class Export extends React.Component {
         for(let m = 0; m<count; m++){
             //循环插入元素
             tr = table.insertRow(table.rows.length);
-            for(let n=0;n<5;n++){
+            for(let n=0;n<10;n++){
                 td = tr.insertCell(tr.cells.length);
-                td.innerHTML = m + '_' + n;
+                td.innerHTML = '第'　+ m + '行，第' + n + '列';
                 td.align = "center";
             }
         }
         return table;
+    }
+
+    handleExportMoreJsonData() {
+        const self = this;
+        //配置项,fileName文件名，excel名，writeOptions写入文件配置项
+        const options = {
+            fileName: 'json_glut_test.xlsx',
+            SheetNames: ['json_glut_test'],
+            writeOptions: {bookType: 'xlsx', type: 'binary'}
+        };
+        self.setState({downloading: true});
+        let data = [];
+        data.push([1,2,3,4,5,6,7,8,9,10]);
+        setTimeout(()=>{
+            for(let m = 0; m<self.state.count; m++){
+                //循环插入元素
+                let column = [];
+                for(let n=0;n<10;n++){
+                    const name = '第'　+ (m + 2)+ '行，第' + (n+1) + '列';
+                    column.push(name);
+                }
+                data.push(column)
+            }
+            jsonToSheet([data], options);
+            self.setState({downloading: false});
+        }, 500);
     }
 
     render() {
@@ -101,14 +163,6 @@ class Export extends React.Component {
                             <td>观麦</td>
                             <td>007</td>
                         </tr>
-                        <tr>
-                            <td>李四</td>
-                            <td>23</td>
-                            <td>男</td>
-                            <td>王者荣耀</td>
-                            <td>观麦</td>
-                            <td>009</td>
-                        </tr>
                     </tbody>
                 </table>
                 <div style={{padding: '10px'}}/>
@@ -124,14 +178,6 @@ class Export extends React.Component {
                         <th>爱好</th>
                         <th>公司</th>
                         <th>工号</th>
-                    </tr>
-                    <tr>
-                        <td>张三</td>
-                        <td>23</td>
-                        <td>男</td>
-                        <td>王者荣耀</td>
-                        <td>观麦</td>
-                        <td>007</td>
                     </tr>
                     <tr>
                         <td>李四</td>
@@ -170,8 +216,23 @@ class Export extends React.Component {
                 <div> 数据1：{JSON.stringify(this.state.data1)}</div>
                 <div> 数据2：{JSON.stringify(this.state.data2)}</div>
                 <div style={{padding: '10px'}}/>
-                <button className="btn btn-default" onClick={this.handleExportMoreData}>数据大量导出</button>
-                <div style={{padding: '10px'}}>导出10000条数据</div>
+                <button
+                    className="btn btn-default"
+                    disabled={this.state.downloading}
+                    onClick={this.handleExportMoreTableData}
+                >
+                    {this.state.downloading ? "正在导出中":　"table数据大量导出"}
+                </button>
+                <div style={{padding: '10px'}}>通过创建table,导出10000条数据</div>
+                <div style={{padding: '10px'}}/>
+                <button
+                    className="btn btn-default"
+                    disabled={this.state.downloading}
+                    onClick={this.handleExportMoreJsonData}
+                >
+                    {this.state.downloading ? "正在导出中":　"json数据大量导出"}
+                </button>
+                <div style={{padding: '10px'}}>通过json,导出10000条数据</div>
             </div>
         );
     }
