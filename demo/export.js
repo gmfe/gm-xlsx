@@ -53,7 +53,7 @@ class Export extends React.Component {
             writeOptions: {bookType: 'xlsx', type: 'binary'}
         };
 
-        TableToSheet([tbl1, tbl2], options);
+        tableToSheet([tbl1, tbl2], options);
     }
 
     handleExportTable2() {
@@ -66,7 +66,7 @@ class Export extends React.Component {
             writeOptions: {bookType: 'xlsx', type: 'binary'}
         };
 
-        TableToSheet([tbl], options);
+        tableToSheet([tbl], options);
     }
 
     handleExportData() {
@@ -92,7 +92,7 @@ class Export extends React.Component {
         self.setState({downloading: true});
         setTimeout(()=>{
             const tbl = this.createTable();
-            TableToSheet([tbl], options);
+            tableToSheet([tbl], options);
             self.setState({downloading: false});
         }, 500);
     }
