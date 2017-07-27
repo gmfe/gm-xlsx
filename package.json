@@ -4,8 +4,10 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "precommit": "eslint ./src/ ./demo/;",
     "clear": "rm -rf build && mkdir build;",
-    "start": "npm run clear && NODE_ENV=development webpack-dev-server --host 0.0.0.0 --port 5000 --inline --hot --devtool eval --progress --colors"
+    "start": "npm run clear && NODE_ENV=development webpack-dev-server --host 0.0.0.0 --port 5000 --inline --hot --devtool eval --progress --colors",
+    "publishpatch": "git add --all; git commit -m 'c'; npm version patch; git push origin HEAD:master; npm publish --registry='https://registry.npmjs.org'; cnpm sync gm-xlsx; npm version;"
   },
   "peerDependencies": {
     "file-loader": "^0.11.2",
