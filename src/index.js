@@ -24,8 +24,7 @@ const tableToSheet = (datas, options) => {
  * 导入excel,解析excel文档转换为json
  */
 const sheetToJson = (file) => {
-    return new Promise(
-        function (resolve, reject) {
+    return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsBinaryString(file);
 
@@ -34,7 +33,7 @@ const sheetToJson = (file) => {
                 const binary = data.target.result;
                 const wb = read(binary, {type: 'binary'});
                 let res = [];
-
+                //通过wb.SheetNames数组遍历，返回有序json数组
                 _.each(wb.SheetNames, (name) => {
                     const data = utils.sheet_to_json(wb.Sheets[name], {header:1});
                     //去掉最后为空的数组
