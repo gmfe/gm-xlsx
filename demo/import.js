@@ -20,10 +20,8 @@ class Import extends React.Component {
         }
 
         const file = files[0];
-        const readOptions = {type: 'binary'};
 
-        sheetToJson(file, {header:1}, readOptions).then((res) => {
-            console.log(res);
+        sheetToJson(file).then((res) => {
             this.setState({result: res});
         });
     }

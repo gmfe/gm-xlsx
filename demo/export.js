@@ -62,8 +62,7 @@ class Export extends React.Component {
         //配置项,fileName文件名，excel名，writeOptions写入文件配置项
         const options = {
             fileName: 'table2_test.xlsx',
-            SheetNames: ['test2'],
-            writeOptions: {bookType: 'xlsx', type: 'binary'}
+            SheetNames: ['test2']
         };
 
         tableToSheet([tbl], options);
@@ -74,8 +73,7 @@ class Export extends React.Component {
         //配置项,fileName文件名，excel名，writeOptions写入文件配置项
         const options = {
             fileName: 'test.xlsx',
-            SheetNames: ['test1', 'test2'],
-            writeOptions: {bookType: 'xlsx', type: 'binary'}
+            SheetNames: ['test1', 'test2']
         };
 
         jsonToSheet([data1, data2], options)
@@ -86,8 +84,7 @@ class Export extends React.Component {
         //配置项,fileName文件名，excel名，writeOptions写入文件配置项
         const options = {
             fileName: 'glut_test.xlsx',
-            SheetNames: ['glut_test'],
-            writeOptions: {bookType: 'xlsx', type: 'binary'}
+            SheetNames: ['glut_test']
         };
         self.setState({downloading: true});
         setTimeout(()=>{
@@ -118,8 +115,7 @@ class Export extends React.Component {
         //配置项,fileName文件名，excel名，writeOptions写入文件配置项
         const options = {
             fileName: 'json_glut_test.xlsx',
-            SheetNames: ['json_glut_test'],
-            writeOptions: {bookType: 'xlsx', type: 'binary'}
+            SheetNames: ['json_glut_test']
         };
         self.setState({downloading: true});
         let data = [];
