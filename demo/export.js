@@ -147,13 +147,13 @@ class Export extends React.Component {
                 表格1
                 <table id="sheetjs1" className="table table-bordered">
                     <tbody>
-                        <tr>
-                            <th>姓名</th>
-                            <th>年龄</th>
-                            <th>性别</th>
-                            <th>爱好</th>
-                            <th>公司</th>
-                            <th>工号</th>
+                        <tr style={{fontSize: '20px', fontFamily: 'bold'}}>
+                            <th style={{ textAlign: 'center'}}>姓名</th>
+                            <th style={{ textAlign: 'center'}}>年龄</th>
+                            <th style={{ textAlign: 'right'}}>性别</th>
+                            <th style={{ textAlign: 'center'}}>爱好</th>
+                            <th style={{ textAlign: 'center'}}>公司</th>
+                            <th style={{ textAlign: 'right'}}>工号</th>
                         </tr>
                         <tr>
                             <td>张三</td>

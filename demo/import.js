@@ -10,7 +10,6 @@ class Import extends React.Component {
         };
 
         this.handleFileLoad = ::this.handleFileLoad;
-        this.handleFile = ::this.handleFile;
     }
 
     handleFileLoad(e) {
@@ -23,12 +22,10 @@ class Import extends React.Component {
         const file = files[0];
         const readOptions = {type: 'binary'};
 
-        sheetToJson(file, this.handleFile, {header:1}, readOptions);
-    }
-
-    handleFile(res) {
-        console.log(res);
-        this.setState({result: res});
+        sheetToJson(file, {header:1}, readOptions).then((res) => {
+            console.log(res);
+            this.setState({result: res});
+        });
     }
 
     render() {

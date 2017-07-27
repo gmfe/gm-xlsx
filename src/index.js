@@ -1,9 +1,9 @@
-import XLSX from '../node_modules/xlsx/xlsx';
+import XLSX from 'xlsx';
 import FileSaver from 'file-saver';
 import _ from 'lodash';
 
 const {utils, write, read} = XLSX;
-const {json_to_sheet, table_to_sheet, aoa_to_sheet} = utils;
+const {json_to_sheet, table_to_sheet} = utils;
 
 /**
  *  通过json数组导出模板
@@ -29,28 +29,29 @@ const tableToSheet = (tableMap, options) => {
 /**
  * 导入excel,解析excel文档转换为json
  * @param file
- * @param cb
  * @param options
  */
-const sheetToJson = (file, cb, options, readOptions) => {
-    const reader = new FileReader();
-    reader.readAsBinaryString(file);
+const sheetToJson = (file, options = {}, readOptions = {}) => {
+    return new Promise(
+        function (resolve, reject) {
+            const reader = new FileReader();
+            reader.readAsBinaryString(file);
 
-    //读取文件成功后执行
-    reader.onload = (data) => {
-        const binary = data.target.result;
-        const wb = read(binary, readOptions);
-        let res = {};
-        _.each(wb.Sheets, (ws, name) => {
-            res[name] = XLSX.utils.sheet_to_json(ws, options);
-        });
+            //读取文件成功后执行
+            reader.onload = (data) => {
+                const binary = data.target.result;
+                const wb = read(binary, readOptions);
+                let res = {};
+                _.each(wb.Sheets, (ws, name) => {
+                    res[name] = XLSX.utils.sheet_to_json(ws, options);
+                });
 
-        cb(res);
-    };
+                resolve(res);
+            };
 
-    reader.onerror = () => {
-        throw Error('读取文件错误');
-    };
+            reader.onerror = reject;
+        }
+    );
 };
 
 //字符串转字符流
