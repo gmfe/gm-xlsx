@@ -1,4 +1,4 @@
-import {utils, write, read} from 'xlsx';
+import {utils, write, read} from 'XLSX';
 import FileSaver from 'file-saver';
 import _ from 'lodash';
 
