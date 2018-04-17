@@ -43,8 +43,8 @@ class Export extends React.Component {
     }
 
     handleExportTable1() {
-        const tbl1 = document.getElementById('sheetjs1');
-        const tbl2 = document.getElementById('sheetjs2');
+        const tbl1 = window.document.getElementById('sheetjs1');
+        const tbl2 = window.document.getElementById('sheetjs2');
 
         //配置项,fileName文件名，excel名，writeOptions写入文件配置项
         const options = {
@@ -57,7 +57,7 @@ class Export extends React.Component {
     }
 
     handleExportTable2() {
-        const tbl = document.getElementById('sheetjs2');
+        const tbl = window.document.getElementById('sheetjs2');
 
         //配置项,fileName文件名，excel名，writeOptions写入文件配置项
         const options = {
@@ -76,7 +76,7 @@ class Export extends React.Component {
             SheetNames: ['test1', 'test2']
         };
 
-        jsonToSheet([data1, data2], options)
+        jsonToSheet([data1, data2], options);
     }
 
     handleExportMoreTableData() {
@@ -96,14 +96,14 @@ class Export extends React.Component {
 
     createTable(){
         const count = this.state.count;
-        let table = document.createElement("table");
+        let table = window.document.createElement("table");
         let tr,td;
         for(let m = 0; m<count; m++){
             //循环插入元素
             tr = table.insertRow(table.rows.length);
             for(let n=0;n<10;n++){
                 td = tr.insertCell(tr.cells.length);
-                td.innerHTML = '第'　+ m + '行，第' + n + '列';
+                td.innerHTML = '第' + m + '行，第' + n + '列';
                 td.align = "center";
             }
         }
@@ -125,10 +125,10 @@ class Export extends React.Component {
                 //循环插入元素
                 let column = [];
                 for(let n=0;n<10;n++){
-                    const name = '第'　+ (m + 2)+ '行，第' + (n+1) + '列';
+                    const name = '第' + (m + 2)+ '行，第' + (n+1) + '列';
                     column.push(name);
                 }
-                data.push(column)
+                data.push(column);
             }
             jsonToSheet([data], options);
             self.setState({downloading: false});
@@ -217,7 +217,7 @@ class Export extends React.Component {
                     disabled={this.state.downloading}
                     onClick={this.handleExportMoreTableData}
                 >
-                    {this.state.downloading ? "正在导出中":　"table数据大量导出"}
+                    {this.state.downloading ? "正在导出中": "table数据大量导出"}
                 </button>
                 <div style={{padding: '10px'}}>通过创建table,导出10000条数据</div>
                 <div style={{padding: '10px'}}/>
@@ -226,7 +226,7 @@ class Export extends React.Component {
                     disabled={this.state.downloading}
                     onClick={this.handleExportMoreJsonData}
                 >
-                    {this.state.downloading ? "正在导出中":　"json数据大量导出"}
+                    {this.state.downloading ? "正在导出中": "json数据大量导出"}
                 </button>
                 <div style={{padding: '10px'}}>通过json,导出10000条数据</div>
             </div>
