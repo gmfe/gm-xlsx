@@ -9,6 +9,20 @@ const {
 } = utils
 
 /**
+ * 官方wiki中提到重写Range的方法: https://github.com/SheetJS/js-xlsx/wiki/General-Utility-Functions#updating-worksheet-range
+ * @param ws 表格数据
+ */
+function updateSheetRange (ws) {
+  let range = { s: { r: 20000000, c: 20000000 }, e: { r: 0, c: 0 } }
+  Object.keys(ws).filter(function (x) { return x.charAt(0) !== '!' })
+    .map(utils.decode_cell).forEach(function (x) {
+      range.s.c = Math.min(range.s.c, x.c); range.s.r = Math.min(range.s.r, x.r)
+      range.e.c = Math.max(range.e.c, x.c); range.e.r = Math.max(range.e.r, x.r)
+    })
+  ws['!ref'] = utils.encode_range(range)
+}
+
+/**
  *  通过json数组导出模板
  */
 const jsonToSheet = (datas, options) => {
@@ -39,7 +53,16 @@ const sheetToJson = (file) => {
       let res = []
       // 通过wb.SheetNames数组遍历，返回有序json数组
       _.each(wb.SheetNames, (name) => {
-        const data = utils.sheet_to_json(wb.Sheets[name], {header: 1})
+        let sheet = wb.Sheets[name]
+        // 参考 issue
+        // https://github.com/SheetJS/js-xlsx/issues/1004
+        // https://github.com/SheetJS/js-xlsx/issues/764
+        // 因为一些原因(第三方工具导出/wps不兼容?) 客户的excel中 <dimension ref="A1:W1048576"/> ref属性可能有问题
+        // 解决方案
+        // https://github.com/SheetJS/js-xlsx/wiki/General-Utility-Functions#updating-worksheet-range
+        updateSheetRange(sheet)
+
+        const data = utils.sheet_to_json(sheet, {header: 1})
         // 去掉最后为空的数组
         const list = _([...data]).reverse().value()
         let lastNullNum = 0
