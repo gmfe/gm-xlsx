@@ -64,7 +64,7 @@ const sheetToJson = (file) => {
 
         const data = utils.sheet_to_json(sheet, {header: 1})
         // 去掉最后为空的数组
-        const list = _([...data]).reverse().value()
+        const list = _.reverse(data)
         let lastNullNum = 0
         _.find(list, (l) => {
           if (l.length === 0) {
